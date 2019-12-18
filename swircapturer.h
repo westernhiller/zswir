@@ -9,7 +9,6 @@
 #include <QPair>
 #include "global.h"
 
-
 typedef enum
 {
     SWIRCMD_NONE,
@@ -41,10 +40,8 @@ class SwirCapturer : public QTcpSocket
     Q_OBJECT
 
 public:
-    explicit SwirCapturer();
+    explicit SwirCapturer(ZSWIRSETTINGS* pSettings = nullptr);
     ~SwirCapturer();
-    void start();    
-    void stop();
 
 signals:
     void parseFrame(QByteArray);
@@ -63,6 +60,7 @@ private:
     STRUCT_PARAMS* m_params;
     ENUM_SWIRCMD m_lastCmd;
     QByteArray m_frameByteArray;
+    ZSWIRSETTINGS* m_pSettings;
 
     void readFrame();
     void getParams();
@@ -77,6 +75,8 @@ private slots:
     void readFromSocket();
 
 public slots:
+    void start();
+    void stop();
     void restart();
     void enableHighGain(bool bEnable);
     void enableNonuniformityCorrection(bool bEnable);

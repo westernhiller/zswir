@@ -15,27 +15,34 @@
 #include "opencv2/imgcodecs/imgcodecs.hpp"
 #include "opencv2/videoio/videoio.hpp"
 
-using namespace std;
-using namespace cv;
-
-#define IPADDR      "192.168.1.160"
-#define PORT        8200
-//#define RTSP_URL    "rtsp://admin:Aa11111111@192.168.1.64:554"
-#define RTSP_URL    "rtsp://192.168.1.160:554/main"
-
-#define SWIRIP      "192.168.1.10"
-#define SWIRPORT    2001
-
-const int SWIRWIDTH = 1280;
-const int SWIRHEIGHT = 1024;
+const int SWIRWIDTH = 644;
+const int SWIRHEIGHT = 512;
 const int FRAME_PMNUM =	16;
 const int FRAME_PXCNT = SWIRWIDTH * SWIRHEIGHT;
 const int FRAMEBUFSIZE = FRAME_PXCNT * 2 + 64;
 
+typedef enum
+{
+    WIDGET_INVALID,
+    WIDGET_MAIN,
+    WIDGET_REPLAY,
+    WIDGET_BROWSER,
+    WIDGET_SETTINGS,
+} WIDGET_ID;
+
+typedef struct
+{
+    QString path;
+    QString pathToday;
+    QString ip;
+    bool bFPS;
+    int port;
+} ZSWIRSETTINGS;
+
 void msleep(unsigned int msec);
 
-QImage mat2qimage(const Mat &mat);
-Mat qimage2mat(const QImage &qimage);
-Mat autoWhiteBalance(const Mat& imgin);
+QImage mat2qimage(const cv::Mat &mat);
+cv::Mat qimage2mat(const QImage &qimage);
+cv::Mat autoWhiteBalance(const cv::Mat& imgin);
 
 #endif // GLOBAL_H

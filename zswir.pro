@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network opengl
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,41 +24,65 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-INCLUDEPATH += $$_PRO_FILE_PWD_/include \
-    $$QtDir/include \
+win32 {
+INCLUDEPATH += $$_PRO_FILE_PWD_\include \
+    $$OPENCV_DIR\include
 
 LIBS += -L$$_PRO_FILE_PWD_/lib \
-    -L$$QtDir/lib \
     -lavcodec\
     -lavutil\
     -lavformat\
     -lswscale\
     -lswresample \
+    -lopencv_world410
+}
+unix {
+INCLUDEPATH += /usr/local/include \
+    /usr/local/include/opencv4
 
-CONFIG(debug, debug|release) {
-    LIBS += -lopencv_world341d
-} else {
-    LIBS += -lopencv_world341
+LIBS += -L/usr/local/lib \
+    -lavcodec\
+    -lavutil\
+    -lavformat\
+    -lswscale\
+    -lswresample \
+    -lopencv_world \
 }
 
-
 SOURCES += \
-        glcanvas.cpp \
+        canvas.cpp \
+        imagebrowser.cpp \
+        imagebutton.cpp \
         main.cpp \
+        mainwindow.cpp \
+        photothread.cpp \
+        replaycanvas.cpp \
+        replaydlg.cpp \
+        settingdialog.cpp \
         swircapturer.cpp \
         swirprocessor.cpp \
+        utils.cpp \
         videoencoder.cpp \
         zswirdialog.cpp
 
 HEADERS += \
-        glcanvas.h \
+        canvas.h \
         global.h \
+        imagebrowser.h \
+        imagebutton.h \
+        mainwindow.h \
+        photothread.h \
+        replaycanvas.h \
+        replaydlg.h \
+        settingdialog.h \
         swircapturer.h \
         swirprocessor.h \
         videoencoder.h \
         zswirdialog.h
 
 FORMS += \
+        mainwindow.ui \
+        settingdialog.ui \
         zswirdialog.ui
 
 # Default rules for deployment.

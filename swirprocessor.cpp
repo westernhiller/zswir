@@ -4,6 +4,9 @@
 
 #include "global.h"
 
+using namespace std;
+using namespace cv;
+
 SwirProcessor::SwirProcessor(QObject* parent)
     :QThread(parent)
     , m_bSmooth(false)

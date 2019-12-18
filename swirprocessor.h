@@ -41,9 +41,9 @@ private:
 
     void process(QByteArray frame);
     void clearFrames();
-    void smoothImage(Mat imgFrame);
-    Mat frame2Mat(uint16_t *buffer);
-    void addFPS(Mat imgFrame);
+    void smoothImage(cv::Mat imgFrame);
+    cv::Mat frame2Mat(uint16_t *buffer);
+    void addFPS(cv::Mat imgFrame);
 
 private slots:
     void onTimer();

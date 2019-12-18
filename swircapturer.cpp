@@ -11,13 +11,13 @@
 
 #include "global.h"
 
-SwirCapturer::SwirCapturer()
+SwirCapturer::SwirCapturer(ZSWIRSETTINGS* pSettings)
     : m_nBytes2Read(0)
     , m_bConnected(false)
     , m_params(nullptr)
+    , m_pSettings(pSettings)
 {
     connect(this, SIGNAL(readyRead()), this, SLOT(readFromSocket()));
-    connect(this, SIGNAL(disconnected()), this, SLOT(restart()));
 
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimer()));
@@ -40,7 +40,7 @@ void SwirCapturer::onTimer()
     if(m_nHeartbeating++ > 300)
     {
         m_timer->stop();
-        restart();
+//        restart();
     }
 
     // wait for no one to finish
@@ -77,12 +77,15 @@ void SwirCapturer::onTimer()
 
 void SwirCapturer::start()
 {
-    connectToHost(SWIRIP, SWIRPORT, QTcpSocket::ReadWrite);
+//    qDebug() << "SwirCapturer::start()";
+    connectToHost(m_pSettings->ip, m_pSettings->port, QTcpSocket::ReadWrite);
     if(waitForConnected())
     {
-        qDebug() << "swir socket connected\n";
+//        qDebug() << "swir socket connected\n";
         emit sendMessage(tr("swir socket connected\n"));
         m_bConnected = true;
+
+//        connect(this, SIGNAL(disconnected()), this, SLOT(start()));
         m_timer->start(5);
         getParams();
     }
@@ -90,13 +93,17 @@ void SwirCapturer::start()
 
 void SwirCapturer::stop()
 {
-//    qDebug() << "socket reconnecting...\n";
-    emit sendMessage(tr("swir socket reconnecting..."));
+//    qDebug() << "socket disconnecting...\n";
+    emit sendMessage(tr("swir socket disconnecting..."));
+//    disconnect(this, SIGNAL(disconnected()), this, SLOT(start()));
     disconnectFromHost();
+    m_timer->stop();
+    m_bConnected = false;
 }
 
 void SwirCapturer::restart()
 {
+//    qDebug() << "SwirCapturer::restart()\n";
     stop();
     msleep(500);
     start();

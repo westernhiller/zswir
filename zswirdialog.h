@@ -2,10 +2,12 @@
 #define ZSWIRDIALOG_H
 
 #include <QDialog>
-#include "glcanvas.h"
+#include <QTimer>
+#include "canvas.h"
 #include "swircapturer.h"
 #include "swirprocessor.h"
 #include "videoencoder.h"
+#include "photothread.h"
 
 namespace Ui {
 class ZSwirDialog;
@@ -19,27 +21,46 @@ public:
     explicit ZSwirDialog(QWidget *parent = nullptr);
     ~ZSwirDialog();
 
+    void startThread();
+
 signals:
-    void updateSwir(QImage image);
-    void saveSwirVideoFrame(QImage image);
+    void startCapturing();
+    void stopCapturing();
+    void updateSwir(QImage);
+    void savePhoto(QImage);
+    void showWidget(WIDGET_ID);
 
 private:
     Ui::ZSwirDialog *ui;
-    QImage          m_imgSwir;
-    GLCanvas*       m_pCanvas;
+
+    bool            m_bFullscreen;
+    QWidget*        m_pToolbar;
+    Canvas*         m_pCanvas;
+    QLabel*         m_pMessage;
     SwirCapturer*   m_pSwirCapturer;
     SwirProcessor*  m_pSwirProcessor;
     VideoEncoder*   m_pSwirEncoder;
+    PhotoThread*    m_pPhotoSaver;
     bool            m_bRecording;
-    int             m_nHeartBeatSwir;
-    QString         m_path;
+    bool            m_bSaving;
+    QTimer *        m_pTimer;
+    ZSWIRSETTINGS*  m_pSettings;
+    int             m_nFrame;
 
-private slots:
-    void gotSwir(QImage);
-    void saveImages(QImage, QImage);
-    void onTimer();
     void startRecording();
     void stopRecording();
+private slots:
+    void startThreads();
+    void gotSwir(QImage);
+    void onTimer();
+    void clickOnCanvas();
+    void onPhoto();
+    void onVideo();
+    void onSettings();
+    void onReplay();
+
+public slots:
+    void showFPS(bool);
 };
 
 #endif // ZSWIRDIALOG_H

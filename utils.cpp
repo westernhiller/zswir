@@ -1,7 +1,10 @@
-﻿#include "global.h"
+#include "global.h"
 #include <QTime>
 #include <QDebug>
 #include <opencv2/xphoto.hpp>
+
+using namespace std;
+using namespace cv;
 
 void msleep(unsigned int msec)
 {
@@ -68,6 +71,7 @@ Mat qimage2mat(const QImage &qimage)
         mat = Mat(qimage.height(), qimage.width(), CV_8UC3, (uchar *)qimage.constBits(), qimage.bytesPerLine());
         mat2 = Mat(mat.rows, mat.cols, CV_8UC3);
         mixChannels(&mat, 1, &mat2, 1, from_to, 3);
+        cvtColor(mat2, mat2, COLOR_BGR2RGB);
         return mat2;
         break;
     case QImage::Format_Indexed8:
@@ -77,36 +81,5 @@ Mat qimage2mat(const QImage &qimage)
         break;
     }
     return mat;
-}
-
-Mat autoWhiteBalance(const Mat& imageSource)
-{
-/*    Mat imageResult;
-    vector<Mat> imageRGB;
-    //RGB三通道分离
-    split(imageSource, imageRGB);
-    //求原始图像的RGB分量的均值
-    double R, G, B;
-    B = mean(imageRGB[0])[0];
-    G = mean(imageRGB[1])[0];
-    R = mean(imageRGB[2])[0];
-    //需要调整的RGB分量的增益
-
-    double KR, KG, KB;
-    KB = (R + G + B) / (3 * B);
-    KG = (R + G + B) / (3 * G);
-    KR = (R + G + B) / (3 * R);
-    //调整RGB三个通道各自的值
-    imageRGB[0] = imageRGB[0] * KB;
-    imageRGB[1] = imageRGB[1] * KG;
-    imageRGB[2] = imageRGB[2] * KR;
-    //RGB三通道图像合并
-    merge(imageRGB, imageResult);
-*/
-    Mat imageResult;
-    Ptr<xphoto::WhiteBalancer> simpleWB = xphoto::createSimpleWB();
-    simpleWB->balanceWhite(imageSource, imageResult);
-
-    return imageResult;
 }
 
